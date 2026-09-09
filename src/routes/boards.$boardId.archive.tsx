@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Trash2 } from "lucide-react";
+import { ArchiveRestore, Trash2 } from "lucide-react";
 import {
   deleteTaskPermanently,
   getBoard,
   listArchivedTasks,
+  restoreTask,
   type Task,
 } from "@/api/mockClient";
+
 import { useApi, useMutate } from "@/lib/app-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
