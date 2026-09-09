@@ -139,6 +139,9 @@ export function ColumnView({
           </div>
         ) : (
           <>
+            {columnDraggable && (
+              <GripVertical className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            )}
             <h2
               className={cn(
                 "flex-1 truncate text-sm font-semibold uppercase tracking-wide",
