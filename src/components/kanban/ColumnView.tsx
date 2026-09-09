@@ -91,10 +91,22 @@ export function ColumnView({
 
   return (
     <section
-      className="flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur"
+      className={cn(
+        "flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur transition-opacity",
+        draggingColumnId === column.id && "opacity-40",
+      )}
       aria-label={`${column.name} column`}
     >
-      <header className="mb-2 flex items-center gap-2">
+      <header
+        className={cn("mb-2 flex items-center gap-2", columnDraggable && "cursor-grab active:cursor-grabbing")}
+        draggable={columnDraggable}
+        onDragStart={(e) => {
+          if (!columnDraggable) return;
+          e.dataTransfer.effectAllowed = "move";
+          onDragColumn(column.id);
+        }}
+        onDragEnd={() => onDragColumn(null)}
+      >
         {renaming ? (
           <div className="flex flex-1 items-center gap-1">
             <Input
