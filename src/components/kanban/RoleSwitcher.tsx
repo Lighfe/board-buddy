@@ -22,9 +22,9 @@ export function RoleSwitcher({ boardId, actualRole }: { boardId: string; actualR
   const current = getSimulatedRole(boardId) ?? actualRole;
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-dashed bg-card px-3 py-1.5">
+    <div className="flex shrink-0 items-center gap-2 rounded-full border border-dashed bg-card px-3 py-1.5">
       <Eye className="size-3.5 text-muted-foreground" />
-      <span className="text-xs text-muted-foreground">Viewing as</span>
+      <span className="whitespace-nowrap text-xs text-muted-foreground">Viewing as</span>
       <Select
         value={current}
         onValueChange={(v) => {
