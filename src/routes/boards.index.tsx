@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export const Route = createFileRoute("/boards")({
+export const Route = createFileRoute("/boards/")({
   head: () => ({
     meta: [
       { title: "Your boards — Tack" },
