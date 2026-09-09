@@ -13,7 +13,7 @@ export function isOverdue(task: Task, columnName: string): boolean {
 }
 
 export function formatDue(dueDate: string): string {
-  const [y, m, d] = dueDate.split("-").map(Number);
+  const [y, m, d] = dueDate.split("-").map(Number) as [number, number, number];
   return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 

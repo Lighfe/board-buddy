@@ -32,7 +32,7 @@ export function RoleSwitcher({ boardId, actualRole }: { boardId: string; actualR
           refresh();
         }}
       >
-        <SelectTrigger size="sm" className="h-7 border-0 bg-transparent px-1 text-xs font-semibold shadow-none">
+        <SelectTrigger className="h-7 border-0 bg-transparent px-1 text-xs font-semibold shadow-none">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

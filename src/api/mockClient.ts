@@ -299,7 +299,7 @@ function orderForIndex<T extends { order: number }>(siblings: T[], index: number
   const next = sorted[at];
 
   if (!prev && !next) return 0;
-  if (!prev) return next.order - SPACING;
+  if (!prev) return next!.order - SPACING;
   if (!next) return prev.order + SPACING;
   if (next.order - prev.order > MIN_GAP) return (prev.order + next.order) / 2;
 
@@ -307,9 +307,7 @@ function orderForIndex<T extends { order: number }>(siblings: T[], index: number
   sorted.forEach((item, i) => {
     item.order = i * SPACING;
   });
-  const p = sorted[at - 1];
-  const n = sorted[at];
-  return (p.order + n.order) / 2;
+  return ((at - 1) * SPACING + at * SPACING) / 2;
 }
 
 /* --------------------------------- Boards -------------------------------- */

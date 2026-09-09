@@ -133,7 +133,7 @@ function SettingsPage() {
                       )
                     }
                   >
-                    <SelectTrigger size="sm" className="w-32">
+                    <SelectTrigger className="w-32">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
