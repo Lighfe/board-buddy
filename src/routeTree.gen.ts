@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BoardsIndexRouteImport } from './routes/boards.index'
 import { Route as BoardsBoardIdRouteImport } from './routes/boards.$boardId'
+import { Route as BoardsBoardIdIndexRouteImport } from './routes/boards.$boardId.index'
 import { Route as BoardsBoardIdArchiveRouteImport } from './routes/boards.$boardId.archive'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const BoardsBoardIdRoute = BoardsBoardIdRouteImport.update({
   path: '/boards/$boardId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoardsBoardIdIndexRoute = BoardsBoardIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BoardsBoardIdRoute,
+} as any)
 const BoardsBoardIdArchiveRoute = BoardsBoardIdArchiveRouteImport.update({
   id: '/archive',
   path: '/archive',
@@ -40,12 +46,13 @@ export interface FileRoutesByFullPath {
   '/boards/$boardId': typeof BoardsBoardIdRouteWithChildren
   '/boards/': typeof BoardsIndexRoute
   '/boards/$boardId/archive': typeof BoardsBoardIdArchiveRoute
+  '/boards/$boardId/': typeof BoardsBoardIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/boards/$boardId': typeof BoardsBoardIdRouteWithChildren
   '/boards': typeof BoardsIndexRoute
   '/boards/$boardId/archive': typeof BoardsBoardIdArchiveRoute
+  '/boards/$boardId': typeof BoardsBoardIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,18 +60,25 @@ export interface FileRoutesById {
   '/boards/$boardId': typeof BoardsBoardIdRouteWithChildren
   '/boards/': typeof BoardsIndexRoute
   '/boards/$boardId/archive': typeof BoardsBoardIdArchiveRoute
+  '/boards/$boardId/': typeof BoardsBoardIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/boards/$boardId' | '/boards/' | '/boards/$boardId/archive'
+  fullPaths:
+    | '/'
+    | '/boards/$boardId'
+    | '/boards/'
+    | '/boards/$boardId/archive'
+    | '/boards/$boardId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/boards/$boardId' | '/boards' | '/boards/$boardId/archive'
+  to: '/' | '/boards' | '/boards/$boardId/archive' | '/boards/$boardId'
   id:
     | '__root__'
     | '/'
     | '/boards/$boardId'
     | '/boards/'
     | '/boards/$boardId/archive'
+    | '/boards/$boardId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BoardsBoardIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/boards/$boardId/': {
+      id: '/boards/$boardId/'
+      path: '/'
+      fullPath: '/boards/$boardId/'
+      preLoaderRoute: typeof BoardsBoardIdIndexRouteImport
+      parentRoute: typeof BoardsBoardIdRoute
+    }
     '/boards/$boardId/archive': {
       id: '/boards/$boardId/archive'
       path: '/archive'
@@ -108,10 +129,12 @@ declare module '@tanstack/react-router' {
 
 interface BoardsBoardIdRouteChildren {
   BoardsBoardIdArchiveRoute: typeof BoardsBoardIdArchiveRoute
+  BoardsBoardIdIndexRoute: typeof BoardsBoardIdIndexRoute
 }
 
 const BoardsBoardIdRouteChildren: BoardsBoardIdRouteChildren = {
   BoardsBoardIdArchiveRoute: BoardsBoardIdArchiveRoute,
+  BoardsBoardIdIndexRoute: BoardsBoardIdIndexRoute,
 }
 
 const BoardsBoardIdRouteWithChildren = BoardsBoardIdRoute._addFileChildren(

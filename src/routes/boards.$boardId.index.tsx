@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import { toast } from "sonner";
 import {
   archiveAllInDone,
   archiveTask,
@@ -88,19 +89,17 @@ function BoardPage() {
               const res = await mutate(() => deleteColumn(boardId, column.id));
               if (res) {
                 const n = res.archivedCount;
-                if (n > 0) {
-                  await mutate(
-                    async () => n,
-                    `Column deleted · ${n} card${n === 1 ? "" : "s"} archived`,
-                  );
-                }
+                toast.success(
+                  n > 0
+                    ? `Column deleted · ${n} card${n === 1 ? "" : "s"} archived`
+                    : "Column deleted",
+                );
               }
             }}
             onArchiveAll={async () => {
               const res = await mutate(() => archiveAllInDone(boardId));
               if (res) {
-                await mutate(
-                  async () => res,
+                toast.success(
                   `${res.archivedCount} card${res.archivedCount === 1 ? "" : "s"} archived`,
                 );
               }
