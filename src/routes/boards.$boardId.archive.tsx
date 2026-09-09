@@ -58,11 +58,11 @@ function ArchivePage() {
           >
             <div className="flex-1">
               <p className="font-medium">{t.title}</p>
-              <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <Badge variant="secondary">{t.columnName}</Badge>
                 <span className={priorityTextClass[t.priority]}>{t.priority}</span>
                 {t.dueDate && <span>Due {formatDue(t.dueDate)}</span>}
-              </p>
+              </div>
               {t.description && <p className="mt-2 text-sm text-muted-foreground">{t.description}</p>}
             </div>
 
