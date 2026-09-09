@@ -28,8 +28,10 @@ interface Props {
   tasks: Task[];
   canEdit: boolean;
   draggingTaskId: string | null;
+  draggingColumnId: string | null;
   onDragTask: (taskId: string | null) => void;
   onDropTask: (columnId: string, index: number) => void;
+  onDragColumn: (columnId: string | null) => void;
   onCreateTask: (title: string) => Promise<void>;
   onRename: (name: string) => Promise<void>;
   onDelete: () => Promise<void>;
@@ -43,8 +45,10 @@ export function ColumnView({
   tasks,
   canEdit,
   draggingTaskId,
+  draggingColumnId,
   onDragTask,
   onDropTask,
+  onDragColumn,
   onCreateTask,
   onRename,
   onDelete,
@@ -61,6 +65,7 @@ export function ColumnView({
   const [dropIndex, setDropIndex] = useState<number | null>(null);
 
   const dragActive = draggingTaskId !== null && canEdit;
+  const columnDraggable = canEdit && !done && !renaming;
 
   const dropZone = (index: number) => (
     <div
