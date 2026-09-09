@@ -41,6 +41,8 @@ function BoardPage() {
   const { data, loading } = useApi(() => getBoard(boardId), [boardId]);
 
   const [dragging, setDragging] = useState<string | null>(null);
+  const [draggingColumn, setDraggingColumn] = useState<string | null>(null);
+  const [columnDropIndex, setColumnDropIndex] = useState<number | null>(null);
   const [openTask, setOpenTask] = useState<Task | null>(null);
   const [addingColumn, setAddingColumn] = useState(false);
   const [columnName, setColumnName] = useState("");
