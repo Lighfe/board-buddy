@@ -26,6 +26,7 @@ interface Props {
   task: Task | null;
   columnName: string;
   canEdit: boolean;
+  archived?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (patch: {

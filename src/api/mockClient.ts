@@ -553,7 +553,7 @@ export async function unarchiveTask(boardId: string, taskId: string): Promise<Ta
 
 export async function deleteTaskPermanently(boardId: string, taskId: string): Promise<void> {
   await wait();
-  require(boardId, "editor");
+  require(boardId, "owner");
   const task = db.tasks.find((t) => t.id === taskId && t.boardId === boardId);
   if (!task) throw new ApiError("Task not found", 404);
   if (!task.archived) throw new ApiError("Only archived tasks can be permanently deleted");
