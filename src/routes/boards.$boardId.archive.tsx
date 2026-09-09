@@ -85,7 +85,23 @@ function ArchivePage() {
               )}
             </button>
 
+            {canRestore && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Restore card"
+                title="Restore to board"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void mutate(() => restoreTask(boardId, t.id), "Card restored");
+                }}
+              >
+                <ArchiveRestore className="size-4" />
+              </Button>
+            )}
+
             {canDelete && (
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
