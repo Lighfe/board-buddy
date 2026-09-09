@@ -1,6 +1,12 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
-import { deleteTaskPermanently, getBoard, listArchivedTasks } from "@/api/mockClient";
+import {
+  deleteTaskPermanently,
+  getBoard,
+  listArchivedTasks,
+  type Task,
+} from "@/api/mockClient";
 import { useApi, useMutate } from "@/lib/app-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { TaskEditorDialog } from "@/components/kanban/TaskEditorDialog";
 import { formatDue, priorityTextClass } from "@/lib/kanban-utils";
 
 export const Route = createFileRoute("/boards/$boardId/archive")({
@@ -34,13 +41,15 @@ function ArchivePage() {
   const mutate = useMutate();
   const { data: board } = useApi(() => getBoard(boardId), [boardId]);
   const { data: tasks, loading } = useApi(() => listArchivedTasks(boardId), [boardId]);
-  const canEdit = board ? board.role !== "viewer" : false;
+  const canDelete = board ? board.role === "owner" : false;
+  const [openTask, setOpenTask] = useState<(Task & { columnName: string }) | null>(null);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
       <h1 className="text-2xl font-bold">Archive</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Archived cards stay off the board for good. Deleting one here can't be undone.
+        Archived cards stay off the board for good. Open one to read its details. Only the board
+        owner can delete a card forever, and that can't be undone.
       </p>
 
       {loading && <p className="mt-6 text-sm text-muted-foreground">Loading…</p>}
@@ -54,22 +63,33 @@ function ArchivePage() {
         {tasks?.map((t) => (
           <li
             key={t.id}
-            className="flex items-start gap-3 rounded-xl border bg-card p-4 shadow-card"
+            className="flex items-start gap-3 rounded-xl border bg-card p-4 shadow-card transition-shadow hover:shadow-lift"
           >
-            <div className="flex-1">
+            <button
+              type="button"
+              className="flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => setOpenTask(t)}
+            >
               <p className="font-medium">{t.title}</p>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <Badge variant="secondary">{t.columnName}</Badge>
                 <span className={priorityTextClass[t.priority]}>{t.priority}</span>
                 {t.dueDate && <span>Due {formatDue(t.dueDate)}</span>}
               </div>
-              {t.description && <p className="mt-2 text-sm text-muted-foreground">{t.description}</p>}
-            </div>
+              {t.description && (
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{t.description}</p>
+              )}
+            </button>
 
-            {canEdit && (
+            {canDelete && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="Delete permanently">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Delete permanently"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Trash2 className="size-4 text-destructive" />
                   </Button>
                 </AlertDialogTrigger>
@@ -96,6 +116,17 @@ function ArchivePage() {
           </li>
         ))}
       </ul>
+
+      <TaskEditorDialog
+        task={openTask}
+        columnName={openTask?.columnName ?? ""}
+        canEdit={false}
+        archived
+        open={openTask !== null}
+        onOpenChange={(o) => !o && setOpenTask(null)}
+        onSave={async () => {}}
+        onArchive={async () => {}}
+      />
     </main>
   );
 }
