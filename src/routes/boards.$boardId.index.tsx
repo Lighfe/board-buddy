@@ -156,7 +156,9 @@ function BoardPage() {
                 void mutate(() => archiveTask(boardId, task.id), "Card archived")
               }
             />
-            {ci === data.columns.length - 1 && columnDropZone(data.columns.length)}
+            {ci === data.columns.length - 1 &&
+              doneIndex === -1 &&
+              columnDropZone(data.columns.length)}
           </div>
         ))}
 
