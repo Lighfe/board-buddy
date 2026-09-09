@@ -68,10 +68,14 @@ export function TaskEditorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-display">{canEdit ? "Edit card" : "Card details"}</DialogTitle>
+          <DialogTitle className="font-display">
+            {archived ? "Archived card" : canEdit ? "Edit card" : "Card details"}
+          </DialogTitle>
           <DialogDescription>
             In {columnName}
-            {!canEdit && " · you have view-only access, so this card is read-only."}
+            {archived
+              ? " · this card is archived, so it can't be edited."
+              : !canEdit && " · you have view-only access, so this card is read-only."}
           </DialogDescription>
         </DialogHeader>
 
