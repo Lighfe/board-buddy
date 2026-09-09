@@ -11,6 +11,7 @@ import {
   getBoard,
   moveTask,
   renameColumn,
+  reorderColumn,
   updateTask,
   type Task,
 } from "@/api/mockClient";
@@ -19,6 +20,8 @@ import { ColumnView } from "@/components/kanban/ColumnView";
 import { TaskEditorDialog } from "@/components/kanban/TaskEditorDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { isDoneColumn } from "@/lib/kanban-utils";
 
 export const Route = createFileRoute("/boards/$boardId/")({
   head: () => ({
