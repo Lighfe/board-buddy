@@ -42,6 +42,7 @@ export function TaskEditorDialog({
   task,
   columnName,
   canEdit,
+  archived = false,
   open,
   onOpenChange,
   onSave,
