@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, MoreHorizontal, Plus, Trash2, X } from "lucide-react";
+import { Check, GripVertical, MoreHorizontal, Plus, Trash2, X } from "lucide-react";
 import type { Column, Task } from "@/api/mockClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
