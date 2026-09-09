@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Trash2 } from "lucide-react";
+import { ArchiveRestore, Trash2 } from "lucide-react";
 import {
   deleteTaskPermanently,
   getBoard,
   listArchivedTasks,
+  restoreTask,
   type Task,
 } from "@/api/mockClient";
+
 import { useApi, useMutate } from "@/lib/app-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,15 +44,17 @@ function ArchivePage() {
   const { data: board } = useApi(() => getBoard(boardId), [boardId]);
   const { data: tasks, loading } = useApi(() => listArchivedTasks(boardId), [boardId]);
   const canDelete = board ? board.role === "owner" : false;
+  const canRestore = board ? board.role === "owner" || board.role === "editor" : false;
   const [openTask, setOpenTask] = useState<(Task & { columnName: string }) | null>(null);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
       <h1 className="text-2xl font-bold">Archive</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Archived cards stay off the board for good. Open one to read its details. Only the board
+        Open a card to read its details, or restore it to put it back on the board. Only the board
         owner can delete a card forever, and that can't be undone.
       </p>
+
 
       {loading && <p className="mt-6 text-sm text-muted-foreground">Loading…</p>}
       {tasks?.length === 0 && (
@@ -81,7 +85,23 @@ function ArchivePage() {
               )}
             </button>
 
+            {canRestore && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Restore card"
+                title="Restore to board"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void mutate(() => restoreTask(boardId, t.id), "Card restored");
+                }}
+              >
+                <ArchiveRestore className="size-4" />
+              </Button>
+            )}
+
             {canDelete && (
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button

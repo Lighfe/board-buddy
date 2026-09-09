@@ -551,6 +551,36 @@ export async function unarchiveTask(boardId: string, taskId: string): Promise<Ta
   return clone(task);
 }
 
+/** Puts an archived task back on the board and returns the refreshed archive list. */
+export async function restoreTask(
+  boardId: string,
+  taskId: string,
+): Promise<Array<Task & { columnName: string }>> {
+  await wait();
+  require(boardId, "editor");
+  const task = db.tasks.find((t) => t.id === taskId && t.boardId === boardId);
+  if (!task) throw new ApiError("Task not found", 404);
+  if (!task.archived) throw new ApiError("That card is not archived", 409);
+
+  const original = db.columns.find((c) => c.id === task.columnId && c.boardId === boardId);
+  const fallback = db.columns.find(
+    (c) => c.boardId === boardId && c.name.trim().toLowerCase() === "backlog",
+  );
+  const target = original ?? fallback;
+  if (!target) throw new ApiError("No column available to restore into", 409);
+
+  task.archived = false;
+  task.columnId = target.id;
+  const siblings = db.tasks.filter(
+    (t) => t.columnId === target.id && !t.archived && t.id !== task.id,
+  );
+  task.order = orderForIndex(siblings, siblings.length);
+
+  return listArchivedTasks(boardId);
+}
+
+
+
 export async function deleteTaskPermanently(boardId: string, taskId: string): Promise<void> {
   await wait();
   require(boardId, "owner");
