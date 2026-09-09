@@ -10,6 +10,7 @@ import {
   listShareLinks,
   removeMember,
   renameBoard,
+  revokeShareLink,
   transferOwnership,
   updateMemberRole,
   type ShareRole,
@@ -264,7 +265,7 @@ function SettingsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => void mutate(() => revoke(boardId, l.id), "Link revoked")}
+                    onClick={() => void mutate(() => revokeShareLink(boardId, l.id), "Link revoked")}
                   >
                     Revoke
                   </Button>
@@ -311,9 +312,4 @@ function SettingsPage() {
       </section>
     </main>
   );
-}
-
-async function revoke(boardId: string, linkId: string) {
-  const { revokeShareLink } = await import("@/api/mockClient");
-  return revokeShareLink(boardId, linkId);
 }

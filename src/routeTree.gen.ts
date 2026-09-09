@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BoardsIndexRouteImport } from './routes/boards.index'
 import { Route as BoardsBoardIdRouteImport } from './routes/boards.$boardId'
+import { Route as ShareTokenRouteImport } from './routes/share.$token'
 import { Route as BoardsBoardIdIndexRouteImport } from './routes/boards.$boardId.index'
 import { Route as BoardsBoardIdArchiveRouteImport } from './routes/boards.$boardId.archive'
+import { Route as BoardsBoardIdSettingsRouteImport } from './routes/boards.$boardId.settings'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +32,11 @@ const BoardsBoardIdRoute = BoardsBoardIdRouteImport.update({
   path: '/boards/$boardId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShareTokenRoute = ShareTokenRouteImport.update({
+  id: '/share/$token',
+  path: '/share/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoardsBoardIdIndexRoute = BoardsBoardIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -40,26 +47,37 @@ const BoardsBoardIdArchiveRoute = BoardsBoardIdArchiveRouteImport.update({
   path: '/archive',
   getParentRoute: () => BoardsBoardIdRoute,
 } as any)
+const BoardsBoardIdSettingsRoute = BoardsBoardIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => BoardsBoardIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/boards/$boardId': typeof BoardsBoardIdRouteWithChildren
+  '/share/$token': typeof ShareTokenRoute
   '/boards/': typeof BoardsIndexRoute
   '/boards/$boardId/archive': typeof BoardsBoardIdArchiveRoute
+  '/boards/$boardId/settings': typeof BoardsBoardIdSettingsRoute
   '/boards/$boardId/': typeof BoardsBoardIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/share/$token': typeof ShareTokenRoute
   '/boards': typeof BoardsIndexRoute
   '/boards/$boardId/archive': typeof BoardsBoardIdArchiveRoute
+  '/boards/$boardId/settings': typeof BoardsBoardIdSettingsRoute
   '/boards/$boardId': typeof BoardsBoardIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/boards/$boardId': typeof BoardsBoardIdRouteWithChildren
+  '/share/$token': typeof ShareTokenRoute
   '/boards/': typeof BoardsIndexRoute
   '/boards/$boardId/archive': typeof BoardsBoardIdArchiveRoute
+  '/boards/$boardId/settings': typeof BoardsBoardIdSettingsRoute
   '/boards/$boardId/': typeof BoardsBoardIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -67,23 +85,34 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/boards/$boardId'
+    | '/share/$token'
     | '/boards/'
     | '/boards/$boardId/archive'
+    | '/boards/$boardId/settings'
     | '/boards/$boardId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/boards' | '/boards/$boardId/archive' | '/boards/$boardId'
+  to:
+    | '/'
+    | '/share/$token'
+    | '/boards'
+    | '/boards/$boardId/archive'
+    | '/boards/$boardId/settings'
+    | '/boards/$boardId'
   id:
     | '__root__'
     | '/'
     | '/boards/$boardId'
+    | '/share/$token'
     | '/boards/'
     | '/boards/$boardId/archive'
+    | '/boards/$boardId/settings'
     | '/boards/$boardId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BoardsBoardIdRoute: typeof BoardsBoardIdRouteWithChildren
+  ShareTokenRoute: typeof ShareTokenRoute
   BoardsIndexRoute: typeof BoardsIndexRoute
 }
 
@@ -110,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BoardsBoardIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/share/$token': {
+      id: '/share/$token'
+      path: '/share/$token'
+      fullPath: '/share/$token'
+      preLoaderRoute: typeof ShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/boards/$boardId/': {
       id: '/boards/$boardId/'
       path: '/'
@@ -124,16 +160,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BoardsBoardIdArchiveRouteImport
       parentRoute: typeof BoardsBoardIdRoute
     }
+    '/boards/$boardId/settings': {
+      id: '/boards/$boardId/settings'
+      path: '/settings'
+      fullPath: '/boards/$boardId/settings'
+      preLoaderRoute: typeof BoardsBoardIdSettingsRouteImport
+      parentRoute: typeof BoardsBoardIdRoute
+    }
   }
 }
 
 interface BoardsBoardIdRouteChildren {
   BoardsBoardIdArchiveRoute: typeof BoardsBoardIdArchiveRoute
+  BoardsBoardIdSettingsRoute: typeof BoardsBoardIdSettingsRoute
   BoardsBoardIdIndexRoute: typeof BoardsBoardIdIndexRoute
 }
 
 const BoardsBoardIdRouteChildren: BoardsBoardIdRouteChildren = {
   BoardsBoardIdArchiveRoute: BoardsBoardIdArchiveRoute,
+  BoardsBoardIdSettingsRoute: BoardsBoardIdSettingsRoute,
   BoardsBoardIdIndexRoute: BoardsBoardIdIndexRoute,
 }
 
@@ -144,6 +189,7 @@ const BoardsBoardIdRouteWithChildren = BoardsBoardIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BoardsBoardIdRoute: BoardsBoardIdRouteWithChildren,
+  ShareTokenRoute: ShareTokenRoute,
   BoardsIndexRoute: BoardsIndexRoute,
 }
 export const routeTree = rootRouteImport
