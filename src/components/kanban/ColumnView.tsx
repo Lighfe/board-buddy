@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, MoreHorizontal, Plus, Trash2, X } from "lucide-react";
+import { Check, GripVertical, MoreHorizontal, Plus, Trash2, X } from "lucide-react";
 import type { Column, Task } from "@/api/mockClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,8 +28,10 @@ interface Props {
   tasks: Task[];
   canEdit: boolean;
   draggingTaskId: string | null;
+  draggingColumnId: string | null;
   onDragTask: (taskId: string | null) => void;
   onDropTask: (columnId: string, index: number) => void;
+  onDragColumn: (columnId: string | null) => void;
   onCreateTask: (title: string) => Promise<void>;
   onRename: (name: string) => Promise<void>;
   onDelete: () => Promise<void>;
@@ -43,8 +45,10 @@ export function ColumnView({
   tasks,
   canEdit,
   draggingTaskId,
+  draggingColumnId,
   onDragTask,
   onDropTask,
+  onDragColumn,
   onCreateTask,
   onRename,
   onDelete,
@@ -61,6 +65,7 @@ export function ColumnView({
   const [dropIndex, setDropIndex] = useState<number | null>(null);
 
   const dragActive = draggingTaskId !== null && canEdit;
+  const columnDraggable = canEdit && !done && !renaming;
 
   const dropZone = (index: number) => (
     <div
@@ -86,10 +91,22 @@ export function ColumnView({
 
   return (
     <section
-      className="flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur"
+      className={cn(
+        "flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur transition-opacity",
+        draggingColumnId === column.id && "opacity-40",
+      )}
       aria-label={`${column.name} column`}
     >
-      <header className="mb-2 flex items-center gap-2">
+      <header
+        className={cn("mb-2 flex items-center gap-2", columnDraggable && "cursor-grab active:cursor-grabbing")}
+        draggable={columnDraggable}
+        onDragStart={(e) => {
+          if (!columnDraggable) return;
+          e.dataTransfer.effectAllowed = "move";
+          onDragColumn(column.id);
+        }}
+        onDragEnd={() => onDragColumn(null)}
+      >
         {renaming ? (
           <div className="flex flex-1 items-center gap-1">
             <Input
@@ -122,6 +139,9 @@ export function ColumnView({
           </div>
         ) : (
           <>
+            {columnDraggable && (
+              <GripVertical className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            )}
             <h2
               className={cn(
                 "flex-1 truncate text-sm font-semibold uppercase tracking-wide",

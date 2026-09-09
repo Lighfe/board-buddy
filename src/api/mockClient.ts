@@ -392,12 +392,15 @@ export async function createColumn(boardId: string, name: string): Promise<Colum
   const trimmed = name.trim();
   if (!trimmed) throw new ApiError("Column name is required");
   assertNotDoneName(trimmed);
-  const siblings = db.columns.filter((c) => c.boardId === boardId);
+  const siblings = db.columns
+    .filter((c) => c.boardId === boardId)
+    .sort((a, b) => a.order - b.order);
+  const doneIndex = siblings.findIndex((c) => isDone(c));
   const column: Column = {
     id: id("c"),
     boardId,
     name: trimmed,
-    order: orderForIndex(siblings, siblings.length),
+    order: orderForIndex(siblings, doneIndex === -1 ? siblings.length : doneIndex),
   };
   db.columns.push(column);
   return clone(column);
@@ -429,6 +432,30 @@ export async function deleteColumn(boardId: string, columnId: string): Promise<{
   });
   db.columns = db.columns.filter((c) => c.id !== columnId);
   return { archivedCount: affected.length };
+}
+
+/** Move a column to a new index. Done is pinned as the rightmost column. */
+export async function reorderColumn(
+  boardId: string,
+  columnId: string,
+  index: number,
+): Promise<Column[]> {
+  await wait();
+  require(boardId, "editor");
+  const column = db.columns.find((c) => c.id === columnId && c.boardId === boardId);
+  if (!column) throw new ApiError("Column not found", 404);
+  if (isDone(column)) throw new ApiError("The Done column stays last");
+
+  const siblings = db.columns
+    .filter((c) => c.boardId === boardId && c.id !== columnId)
+    .sort((a, b) => a.order - b.order);
+  const doneIndex = siblings.findIndex((c) => isDone(c));
+  const maxIndex = doneIndex === -1 ? siblings.length : doneIndex;
+  const target = Math.max(0, Math.min(index, maxIndex));
+  column.order = orderForIndex(siblings, target);
+  return clone(
+    db.columns.filter((c) => c.boardId === boardId).sort((a, b) => a.order - b.order),
+  );
 }
 
 /* --------------------------------- Tasks ---------------------------------- */
@@ -526,7 +553,7 @@ export async function unarchiveTask(boardId: string, taskId: string): Promise<Ta
 
 export async function deleteTaskPermanently(boardId: string, taskId: string): Promise<void> {
   await wait();
-  require(boardId, "editor");
+  require(boardId, "owner");
   const task = db.tasks.find((t) => t.id === taskId && t.boardId === boardId);
   if (!task) throw new ApiError("Task not found", 404);
   if (!task.archived) throw new ApiError("Only archived tasks can be permanently deleted");

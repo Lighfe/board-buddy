@@ -11,6 +11,7 @@ import {
   getBoard,
   moveTask,
   renameColumn,
+  reorderColumn,
   updateTask,
   type Task,
 } from "@/api/mockClient";
@@ -19,6 +20,8 @@ import { ColumnView } from "@/components/kanban/ColumnView";
 import { TaskEditorDialog } from "@/components/kanban/TaskEditorDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { isDoneColumn } from "@/lib/kanban-utils";
 
 export const Route = createFileRoute("/boards/$boardId/")({
   head: () => ({
@@ -38,6 +41,8 @@ function BoardPage() {
   const { data, loading } = useApi(() => getBoard(boardId), [boardId]);
 
   const [dragging, setDragging] = useState<string | null>(null);
+  const [draggingColumn, setDraggingColumn] = useState<string | null>(null);
+  const [columnDropIndex, setColumnDropIndex] = useState<number | null>(null);
   const [openTask, setOpenTask] = useState<Task | null>(null);
   const [addingColumn, setAddingColumn] = useState(false);
   const [columnName, setColumnName] = useState("");
@@ -67,46 +72,94 @@ function BoardPage() {
     await mutate(() => moveTask(boardId, taskId, toColumnId, target));
   };
 
+  const doneIndex = data.columns.findIndex((c) => isDoneColumn(c.name));
+  const maxColumnIndex = doneIndex === -1 ? data.columns.length : doneIndex;
+  const columnDragActive = draggingColumn !== null && canEdit;
+
+  const handleColumnDrop = async (index: number) => {
+    const columnId = draggingColumn;
+    setDraggingColumn(null);
+    setColumnDropIndex(null);
+    if (!columnId) return;
+    const from = data.columns.findIndex((c) => c.id === columnId);
+    let target = Math.min(index, maxColumnIndex);
+    if (from > -1 && from < target) target -= 1;
+    if (from === target) return;
+    await mutate(() => reorderColumn(boardId, columnId, target), "Column moved");
+  };
+
+  const columnDropZone = (index: number) => (
+    <div
+      onDragOver={(e) => {
+        if (!columnDragActive || index > maxColumnIndex) return;
+        e.preventDefault();
+        setColumnDropIndex(index);
+      }}
+      onDragLeave={() => setColumnDropIndex((i) => (i === index ? null : i))}
+      onDrop={(e) => {
+        if (!columnDragActive || index > maxColumnIndex) return;
+        e.preventDefault();
+        void handleColumnDrop(index);
+      }}
+      className={cn(
+        "self-stretch rounded-full transition-all",
+        columnDragActive && index <= maxColumnIndex ? "w-3" : "w-0",
+        columnDropIndex === index && columnDragActive && index <= maxColumnIndex
+          ? "w-8 bg-primary/15 ring-1 ring-primary/40"
+          : "",
+      )}
+    />
+  );
+
   return (
     <main className="flex-1 overflow-x-auto px-4 py-6 scrollbar-slim">
       <div className="flex items-start gap-4">
-        {data.columns.map((column) => (
-          <ColumnView
-            key={column.id}
-            column={column}
-            tasks={tasksIn(column.id)}
-            canEdit={canEdit}
-            draggingTaskId={dragging}
-            onDragTask={setDragging}
-            onDropTask={(cid, i) => void handleDrop(cid, i)}
-            onCreateTask={async (title) => {
-              await mutate(() => createTask(boardId, column.id, { title }));
-            }}
-            onRename={async (name) => {
-              await mutate(() => renameColumn(boardId, column.id, name), "Column renamed");
-            }}
-            onDelete={async () => {
-              const res = await mutate(() => deleteColumn(boardId, column.id));
-              if (res) {
-                const n = res.archivedCount;
-                toast.success(
-                  n > 0
-                    ? `Column deleted · ${n} card${n === 1 ? "" : "s"} archived`
-                    : "Column deleted",
-                );
+        {data.columns.map((column, ci) => (
+          <div key={column.id} className="flex items-stretch">
+            {columnDropZone(ci)}
+            <ColumnView
+              column={column}
+              tasks={tasksIn(column.id)}
+              canEdit={canEdit}
+              draggingTaskId={dragging}
+              draggingColumnId={draggingColumn}
+              onDragTask={setDragging}
+              onDragColumn={setDraggingColumn}
+              onDropTask={(cid, i) => void handleDrop(cid, i)}
+              onCreateTask={async (title) => {
+                await mutate(() => createTask(boardId, column.id, { title }));
+              }}
+              onRename={async (name) => {
+                await mutate(() => renameColumn(boardId, column.id, name), "Column renamed");
+              }}
+              onDelete={async () => {
+                const res = await mutate(() => deleteColumn(boardId, column.id));
+                if (res) {
+                  const n = res.archivedCount;
+                  toast.success(
+                    n > 0
+                      ? `Column deleted · ${n} card${n === 1 ? "" : "s"} archived`
+                      : "Column deleted",
+                  );
+                }
+              }}
+              onArchiveAll={async () => {
+                const res = await mutate(() => archiveAllInDone(boardId));
+                if (res) {
+                  toast.success(
+                    `${res.archivedCount} card${res.archivedCount === 1 ? "" : "s"} archived`,
+                  );
+                }
+              }}
+              onOpenTask={setOpenTask}
+              onArchiveTask={(task) =>
+                void mutate(() => archiveTask(boardId, task.id), "Card archived")
               }
-            }}
-            onArchiveAll={async () => {
-              const res = await mutate(() => archiveAllInDone(boardId));
-              if (res) {
-                toast.success(
-                  `${res.archivedCount} card${res.archivedCount === 1 ? "" : "s"} archived`,
-                );
-              }
-            }}
-            onOpenTask={setOpenTask}
-            onArchiveTask={(task) => void mutate(() => archiveTask(boardId, task.id), "Card archived")}
-          />
+            />
+            {ci === data.columns.length - 1 &&
+              doneIndex === -1 &&
+              columnDropZone(data.columns.length)}
+          </div>
         ))}
 
         {canEdit && (
