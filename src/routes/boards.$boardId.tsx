@@ -16,8 +16,6 @@ const tabClass =
 function BoardLayout() {
   const { boardId } = Route.useParams();
   const { data, error, loading } = useApi(() => getBoard(boardId), [boardId]);
-  const { data: boards } = useApi(() => listBoards(), []);
-  const actualRole = boards?.find((b) => b.id === boardId)?.role;
 
   if (loading && !data) {
     return <p className="p-8 text-sm text-muted-foreground">Loading board…</p>;
