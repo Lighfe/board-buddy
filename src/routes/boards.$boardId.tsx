@@ -78,9 +78,8 @@ function BoardLayout() {
             )}
           </nav>
         </div>
-
-        </div>
       </header>
+
 
       <Outlet />
     </div>
