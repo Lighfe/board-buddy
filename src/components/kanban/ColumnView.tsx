@@ -63,6 +63,7 @@ export function ColumnView({
   const [newTitle, setNewTitle] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [overColumn, setOverColumn] = useState(false);
 
   const dragActive = draggingTaskId !== null && canEdit;
   const columnDraggable = canEdit && !done && !renaming;
@@ -72,13 +73,16 @@ export function ColumnView({
       onDragOver={(e) => {
         if (!dragActive) return;
         e.preventDefault();
+        e.stopPropagation();
         setDropIndex(index);
+        setOverColumn(true);
       }}
-      onDragLeave={() => setDropIndex((i) => (i === index ? null : i))}
       onDrop={(e) => {
         if (!dragActive) return;
         e.preventDefault();
+        e.stopPropagation();
         setDropIndex(null);
+        setOverColumn(false);
         onDropTask(column.id, index);
       }}
       className={cn(
@@ -88,6 +92,7 @@ export function ColumnView({
       )}
     />
   );
+
 
   return (
     <section
