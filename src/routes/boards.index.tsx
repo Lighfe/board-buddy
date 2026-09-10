@@ -3,6 +3,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { KanbanSquare, Plus } from "lucide-react";
 import { createBoard, listBoards } from "@/api/mockClient";
 import { useApi, useApp, useMutate } from "@/lib/app-state";
+import { colorValue, useBoardColorId } from "@/lib/board-color";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +28,14 @@ export const Route = createFileRoute("/boards/")({
   }),
   component: BoardsPage,
 });
+
+function BoardColorDot({ boardId }: { boardId: string }) {
+  const background = colorValue(useBoardColorId(boardId));
+  if (!background) return null;
+  return <span className="size-3 rounded-full border" style={{ background }} aria-hidden />;
+}
+
+
 
 function BoardsPage() {
   const { user } = useApp();
