@@ -214,7 +214,7 @@ export function ColumnView({
         </Button>
       )}
 
-      <div className="flex min-h-24 flex-1 flex-col overflow-y-auto scrollbar-slim">
+      <div className="flex min-h-[16.5rem] flex-1 flex-col scrollbar-slim">
         {dropZone(0)}
         {tasks.map((task, i) => (
           <div key={task.id}>
