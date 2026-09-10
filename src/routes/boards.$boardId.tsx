@@ -2,6 +2,8 @@ import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { getBoard } from "@/api/mockClient";
 import { useApi } from "@/lib/app-state";
+import { colorValue, useBoardColorId } from "@/lib/board-color";
+
 
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -16,6 +18,8 @@ const tabClass =
 function BoardLayout() {
   const { boardId } = Route.useParams();
   const { data, error, loading } = useApi(() => getBoard(boardId), [boardId]);
+  const background = colorValue(useBoardColorId(boardId));
+
 
   if (loading && !data) {
     return <p className="p-8 text-sm text-muted-foreground">Loading board…</p>;
