@@ -63,6 +63,7 @@ export function ColumnView({
   const [newTitle, setNewTitle] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [overColumn, setOverColumn] = useState(false);
 
   const dragActive = draggingTaskId !== null && canEdit;
   const columnDraggable = canEdit && !done && !renaming;
@@ -72,13 +73,16 @@ export function ColumnView({
       onDragOver={(e) => {
         if (!dragActive) return;
         e.preventDefault();
+        e.stopPropagation();
         setDropIndex(index);
+        setOverColumn(true);
       }}
-      onDragLeave={() => setDropIndex((i) => (i === index ? null : i))}
       onDrop={(e) => {
         if (!dragActive) return;
         e.preventDefault();
+        e.stopPropagation();
         setDropIndex(null);
+        setOverColumn(false);
         onDropTask(column.id, index);
       }}
       className={cn(
@@ -89,14 +93,36 @@ export function ColumnView({
     />
   );
 
+
   return (
     <section
       className={cn(
-        "flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur transition-opacity",
+        "flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur transition-all",
         draggingColumnId === column.id && "opacity-40",
+        dragActive && overColumn && "border-primary/50 bg-primary/5",
       )}
       aria-label={`${column.name} column`}
+      onDragOver={(e) => {
+        if (!dragActive) return;
+        e.preventDefault();
+        setDropIndex(null);
+        setOverColumn(true);
+      }}
+      onDragLeave={(e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        setOverColumn(false);
+        setDropIndex(null);
+      }}
+      onDrop={(e) => {
+        if (!dragActive) return;
+        e.preventDefault();
+        const index = dropIndex ?? tasks.length;
+        setDropIndex(null);
+        setOverColumn(false);
+        onDropTask(column.id, index);
+      }}
     >
+
       <header
         className={cn("mb-2 flex items-center gap-2", columnDraggable && "cursor-grab active:cursor-grabbing")}
         draggable={columnDraggable}
@@ -188,7 +214,7 @@ export function ColumnView({
         </Button>
       )}
 
-      <div className="flex min-h-24 flex-1 flex-col overflow-y-auto scrollbar-slim">
+      <div className="flex min-h-[16.5rem] flex-1 flex-col scrollbar-slim">
         {dropZone(0)}
         {tasks.map((task, i) => (
           <div key={task.id}>

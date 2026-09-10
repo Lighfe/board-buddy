@@ -3,6 +3,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { KanbanSquare, Plus } from "lucide-react";
 import { createBoard, listBoards } from "@/api/mockClient";
 import { useApi, useApp, useMutate } from "@/lib/app-state";
+import { colorValue, useBoardColorId } from "@/lib/board-color";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +28,14 @@ export const Route = createFileRoute("/boards/")({
   }),
   component: BoardsPage,
 });
+
+function BoardColorDot({ boardId }: { boardId: string }) {
+  const background = colorValue(useBoardColorId(boardId));
+  if (!background) return null;
+  return <span className="size-3 rounded-full border" style={{ background }} aria-hidden />;
+}
+
+
 
 function BoardsPage() {
   const { user } = useApp();
@@ -99,29 +109,22 @@ function BoardsPage() {
               <span className="inline-flex size-9 items-center justify-center rounded-xl bg-secondary text-secondary-foreground">
                 <KanbanSquare className="size-4" />
               </span>
-              <Badge variant={b.role === "owner" ? "default" : "secondary"} className="capitalize">
-                {b.role}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <BoardColorDot boardId={b.id} />
+                <Badge variant={b.role === "owner" ? "default" : "secondary"} className="capitalize">
+                  {b.role}
+                </Badge>
+              </div>
             </div>
+
             <h2 className="mt-4 text-lg font-semibold group-hover:text-primary">{b.name}</h2>
             <p className="text-xs text-muted-foreground">Owned by {b.ownerName}</p>
           </Link>
         ))}
       </div>
 
-      <section className="mt-10 rounded-2xl border border-dashed p-5">
-        <h2 className="text-sm font-semibold">Try an invite link</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Dave shared his Marketing Launch board with an edit link. Open it to join the board.
-        </p>
-        <Link
-          to="/share/$token"
-          params={{ token: "DEMO-EDIT-TOKEN" }}
-          className="mt-3 inline-block text-sm font-semibold text-primary"
-        >
-          /share/DEMO-EDIT-TOKEN
-        </Link>
-      </section>
+
+
     </main>
   );
 }
