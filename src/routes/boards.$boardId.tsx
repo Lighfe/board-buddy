@@ -77,8 +77,8 @@ function BoardLayout() {
               </Link>
             )}
           </nav>
+        </div>
 
-          {actualRole && <RoleSwitcher boardId={boardId} actualRole={actualRole} />}
         </div>
       </header>
 
