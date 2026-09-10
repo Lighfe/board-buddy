@@ -1,8 +1,8 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { getBoard, listBoards } from "@/api/mockClient";
+import { getBoard } from "@/api/mockClient";
 import { useApi } from "@/lib/app-state";
-import { RoleSwitcher } from "@/components/kanban/RoleSwitcher";
+
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
