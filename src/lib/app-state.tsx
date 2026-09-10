@@ -16,16 +16,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let alive = true;
-    getCurrentUser().then((u) => alive && setUser(u));
+    getCurrentUser()
+      .then((u) => alive && setUser(u))
+      .catch(() => alive && setUser(null));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [rev]);
 
   const refresh = useCallback(() => setRev((r) => r + 1), []);
 
   return <Ctx.Provider value={{ user, rev, refresh }}>{children}</Ctx.Provider>;
 }
+
 
 export const useApp = () => useContext(Ctx);
 
