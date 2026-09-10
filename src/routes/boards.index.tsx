@@ -109,19 +109,8 @@ function BoardsPage() {
         ))}
       </div>
 
-      <section className="mt-10 rounded-2xl border border-dashed p-5">
-        <h2 className="text-sm font-semibold">Try an invite link</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Dave shared his Marketing Launch board with an edit link. Open it to join the board.
-        </p>
-        <Link
-          to="/share/$token"
-          params={{ token: "DEMO-EDIT-TOKEN" }}
-          className="mt-3 inline-block text-sm font-semibold text-primary"
-        >
-          /share/DEMO-EDIT-TOKEN
-        </Link>
-      </section>
+
+
     </main>
   );
 }
