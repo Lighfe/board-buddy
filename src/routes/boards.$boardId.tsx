@@ -1,8 +1,8 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { getBoard, listBoards } from "@/api/mockClient";
+import { getBoard } from "@/api/mockClient";
 import { useApi } from "@/lib/app-state";
-import { RoleSwitcher } from "@/components/kanban/RoleSwitcher";
+
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -16,8 +16,6 @@ const tabClass =
 function BoardLayout() {
   const { boardId } = Route.useParams();
   const { data, error, loading } = useApi(() => getBoard(boardId), [boardId]);
-  const { data: boards } = useApi(() => listBoards(), []);
-  const actualRole = boards?.find((b) => b.id === boardId)?.role;
 
   if (loading && !data) {
     return <p className="p-8 text-sm text-muted-foreground">Loading board…</p>;
@@ -79,10 +77,9 @@ function BoardLayout() {
               </Link>
             )}
           </nav>
-
-          {actualRole && <RoleSwitcher boardId={boardId} actualRole={actualRole} />}
         </div>
       </header>
+
 
       <Outlet />
     </div>
