@@ -16,6 +16,9 @@ import {
   type ShareRole,
 } from "@/api/mockClient";
 import { useApi, useApp, useMutate } from "@/lib/app-state";
+import { BOARD_COLORS, setBoardColorId, useBoardColorId } from "@/lib/board-color";
+import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -106,6 +109,35 @@ function SettingsPage() {
           </Button>
         </div>
       </section>
+
+      <section className="rounded-2xl border bg-card p-6 shadow-card">
+        <h2 className="text-lg font-semibold">Background colour</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Saved on this device only — other members still see the default.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {BOARD_COLORS.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              aria-label={c.label}
+              aria-pressed={colorId === c.id}
+              onClick={() => setBoardColorId(boardId, c.id)}
+              className={cn(
+                "flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors",
+                colorId === c.id ? "border-primary ring-2 ring-primary/30" : "hover:bg-secondary",
+              )}
+            >
+              <span
+                className="size-4 rounded-full border"
+                style={{ background: c.value ?? "var(--background)" }}
+              />
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
 
       <section className="rounded-2xl border bg-card p-6 shadow-card">
         <h2 className="text-lg font-semibold">Members</h2>
