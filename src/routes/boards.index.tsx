@@ -99,10 +99,14 @@ function BoardsPage() {
               <span className="inline-flex size-9 items-center justify-center rounded-xl bg-secondary text-secondary-foreground">
                 <KanbanSquare className="size-4" />
               </span>
-              <Badge variant={b.role === "owner" ? "default" : "secondary"} className="capitalize">
-                {b.role}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <BoardColorDot boardId={b.id} />
+                <Badge variant={b.role === "owner" ? "default" : "secondary"} className="capitalize">
+                  {b.role}
+                </Badge>
+              </div>
             </div>
+
             <h2 className="mt-4 text-lg font-semibold group-hover:text-primary">{b.name}</h2>
             <p className="text-xs text-muted-foreground">Owned by {b.ownerName}</p>
           </Link>
