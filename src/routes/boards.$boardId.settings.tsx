@@ -60,6 +60,8 @@ function SettingsPage() {
   const { user } = useApp();
   const mutate = useMutate();
   const navigate = useNavigate();
+  const colorId = useBoardColorId(boardId);
+
 
   const { data: board } = useApi(() => getBoard(boardId), [boardId]);
   const { data: members } = useApi(() => listMembers(boardId), [boardId]);
