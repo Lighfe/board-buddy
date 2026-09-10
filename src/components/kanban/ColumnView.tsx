@@ -97,11 +97,32 @@ export function ColumnView({
   return (
     <section
       className={cn(
-        "flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur transition-opacity",
+        "flex w-[19rem] shrink-0 flex-col rounded-2xl border bg-surface/80 p-3 backdrop-blur transition-all",
         draggingColumnId === column.id && "opacity-40",
+        dragActive && overColumn && "border-primary/50 bg-primary/5",
       )}
       aria-label={`${column.name} column`}
+      onDragOver={(e) => {
+        if (!dragActive) return;
+        e.preventDefault();
+        setDropIndex(null);
+        setOverColumn(true);
+      }}
+      onDragLeave={(e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        setOverColumn(false);
+        setDropIndex(null);
+      }}
+      onDrop={(e) => {
+        if (!dragActive) return;
+        e.preventDefault();
+        const index = dropIndex ?? tasks.length;
+        setDropIndex(null);
+        setOverColumn(false);
+        onDropTask(column.id, index);
+      }}
     >
+
       <header
         className={cn("mb-2 flex items-center gap-2", columnDraggable && "cursor-grab active:cursor-grabbing")}
         draggable={columnDraggable}
