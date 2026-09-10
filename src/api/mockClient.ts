@@ -110,14 +110,16 @@ async function request<T>(
   path: string,
   body?: unknown,
 ): Promise<T> {
+  const init: RequestInit = { method, credentials: "include" };
+  if (body !== undefined) {
+    init.headers = { "Content-Type": "application/json" };
+    init.body = JSON.stringify(body);
+  }
+
   let res: Response;
   try {
-    res = await fetch(`${BASE_URL}${path}`, {
-      method,
-      credentials: "include",
-      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    res = await fetch(`${BASE_URL}${path}`, init);
+
   } catch {
     throw new ApiError("Can't reach the server. Is the backend running?", 0);
   }
