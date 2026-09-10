@@ -48,3 +48,21 @@ export function setBoardColorId(boardId: string, colorId: string): void {
 export function colorValue(colorId: string): string | null {
   return BOARD_COLORS.find((c) => c.id === colorId)?.value ?? null;
 }
+
+import { useEffect, useState } from "react";
+
+/** Reactive read of the stored colour id (hydration-safe: starts at default). */
+export function useBoardColorId(boardId: string): string {
+  const [id, setId] = useState("default");
+  useEffect(() => {
+    setId(getBoardColorId(boardId));
+    const onChange = () => setId(getBoardColorId(boardId));
+    window.addEventListener("tack:board-color", onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      window.removeEventListener("tack:board-color", onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  }, [boardId]);
+  return id;
+}
