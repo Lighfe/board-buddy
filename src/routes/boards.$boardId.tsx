@@ -34,8 +34,12 @@ function BoardLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div
+      className="flex min-h-screen flex-col"
+      style={background ? { background } : undefined}
+    >
       <header className="border-b bg-card/70 backdrop-blur">
+
         <div className="mx-auto flex w-full max-w-[110rem] flex-wrap items-center gap-3 px-4 py-3">
           <Link
             to="/boards"
