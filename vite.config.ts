@@ -22,6 +22,7 @@ export default defineConfig({
       },
     },
   },
-  // Nitro "static" preset: no server bundle, just the public assets folder.
-  nitro: { preset: "static" },
+  // No Nitro deploy target: nothing server-side is emitted, so the build is
+  // just the static client folder (dist/client) that the backend serves.
+  nitro: false,
 });
