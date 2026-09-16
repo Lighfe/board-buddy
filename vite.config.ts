@@ -6,10 +6,23 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// Static/SPA build target: the app is 100% client-side (all data comes from the
+// FastAPI backend via fetch in src/api/mockClient.ts; no createServerFn and no
+// server-only route loaders), so we emit a plain folder of static files that the
+// backend serves. No SSR runtime, hence no custom server entry.
 export default defineConfig({
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
+    // SPA mode: prerender a single client-side shell to index.html and let
+    // TanStack Router handle every route in the browser.
+    spa: {
+      enabled: true,
+      prerender: {
+        outputPath: "/index.html",
+        crawlLinks: false,
+      },
+    },
   },
+  // No Nitro deploy target: nothing server-side is emitted, so the build is
+  // just the static client folder (dist/client) that the backend serves.
+  nitro: false,
 });
