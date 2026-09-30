@@ -47,9 +47,15 @@ export const Route = createFileRoute("/boards/$boardId/settings")({
   head: () => ({
     meta: [
       { title: "Board settings — Tack" },
-      { name: "description", content: "Rename or delete a board, manage members, invite links and ownership." },
+      {
+        name: "description",
+        content: "Rename or delete a board, manage members, invite links and ownership.",
+      },
       { property: "og:title", content: "Board settings — Tack" },
-      { property: "og:description", content: "Manage members, invite links and ownership for your board." },
+      {
+        property: "og:description",
+        content: "Manage members, invite links and ownership for your board.",
+      },
     ],
   }),
   component: SettingsPage,
@@ -61,7 +67,6 @@ function SettingsPage() {
   const mutate = useMutate();
   const navigate = useNavigate();
   const colorId = useBoardColorId(boardId);
-
 
   const { data: board } = useApi(() => getBoard(boardId), [boardId]);
   const { data: members } = useApi(() => listMembers(boardId), [boardId]);
@@ -139,7 +144,6 @@ function SettingsPage() {
           ))}
         </div>
       </section>
-
 
       <section className="rounded-2xl border bg-card p-6 shadow-card">
         <h2 className="text-lg font-semibold">Members</h2>
@@ -244,7 +248,10 @@ function SettingsPage() {
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() =>
-                    void mutate(() => transferOwnership(boardId, transferTo), "Ownership transferred")
+                    void mutate(
+                      () => transferOwnership(boardId, transferTo),
+                      "Ownership transferred",
+                    )
                   }
                 >
                   Transfer
@@ -260,22 +267,24 @@ function SettingsPage() {
         <div className="mt-3 flex gap-2">
           <Button
             variant="secondary"
-            onClick={() => void mutate(() => createShareLink(boardId, "viewer"), "View link created")}
+            onClick={() =>
+              void mutate(() => createShareLink(boardId, "viewer"), "View link created")
+            }
           >
             <Link2 className="size-4" /> New view link
           </Button>
           <Button
             variant="secondary"
-            onClick={() => void mutate(() => createShareLink(boardId, "editor"), "Edit link created")}
+            onClick={() =>
+              void mutate(() => createShareLink(boardId, "editor"), "Edit link created")
+            }
           >
             <Link2 className="size-4" /> New edit link
           </Button>
         </div>
 
         <ul className="mt-4 space-y-2">
-          {links?.length === 0 && (
-            <li className="text-sm text-muted-foreground">No links yet.</li>
-          )}
+          {links?.length === 0 && <li className="text-sm text-muted-foreground">No links yet.</li>}
           {links?.map((l) => (
             <li key={l.id} className="flex flex-wrap items-center gap-2 rounded-xl border p-3">
               <Badge variant={l.role === "editor" ? "default" : "secondary"} className="capitalize">
@@ -289,7 +298,9 @@ function SettingsPage() {
                   size="icon"
                   aria-label="Copy link"
                   onClick={() => {
-                    void navigator.clipboard?.writeText(`${window.location.origin}/share/${l.token}`);
+                    void navigator.clipboard?.writeText(
+                      `${window.location.origin}/share/${l.token}`,
+                    );
                     toast.success("Link copied");
                   }}
                 >
@@ -299,7 +310,9 @@ function SettingsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => void mutate(() => revokeShareLink(boardId, l.id), "Link revoked")}
+                    onClick={() =>
+                      void mutate(() => revokeShareLink(boardId, l.id), "Link revoked")
+                    }
                   >
                     Revoke
                   </Button>
@@ -313,8 +326,8 @@ function SettingsPage() {
       <section className="rounded-2xl border border-destructive/40 bg-card p-6 shadow-card">
         <h2 className="text-lg font-semibold text-destructive">Delete board</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Deleting “{board.board.name}” removes every column, card, archived card, member and
-          invite link on it. This can't be undone.
+          Deleting “{board.board.name}” removes every column, card, archived card, member and invite
+          link on it. This can't be undone.
         </p>
         <AlertDialog>
           <AlertDialogTrigger asChild>
