@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -161,7 +160,6 @@ function AuthPage() {
         <p className="mt-4 text-center text-xs text-muted-foreground">
           New accounts start with a Personal and a Work board.
         </p>
-
       </div>
     </main>
   );

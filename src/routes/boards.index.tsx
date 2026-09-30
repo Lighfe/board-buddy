@@ -35,8 +35,6 @@ function BoardColorDot({ boardId }: { boardId: string }) {
   return <span className="size-3 rounded-full border" style={{ background }} aria-hidden />;
 }
 
-
-
 function BoardsPage() {
   const { user } = useApp();
   const mutate = useMutate();
@@ -85,7 +83,8 @@ function BoardsPage() {
                   const board = await mutate(() => createBoard(name), "Board created");
                   setName("");
                   setOpen(false);
-                  if (board) void navigate({ to: "/boards/$boardId", params: { boardId: board.id } });
+                  if (board)
+                    void navigate({ to: "/boards/$boardId", params: { boardId: board.id } });
                 }}
               >
                 Create board
@@ -111,7 +110,10 @@ function BoardsPage() {
               </span>
               <div className="flex items-center gap-2">
                 <BoardColorDot boardId={b.id} />
-                <Badge variant={b.role === "owner" ? "default" : "secondary"} className="capitalize">
+                <Badge
+                  variant={b.role === "owner" ? "default" : "secondary"}
+                  className="capitalize"
+                >
                   {b.role}
                 </Badge>
               </div>
@@ -122,9 +124,6 @@ function BoardsPage() {
           </Link>
         ))}
       </div>
-
-
-
     </main>
   );
 }

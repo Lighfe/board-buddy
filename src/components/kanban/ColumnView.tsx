@@ -93,7 +93,6 @@ export function ColumnView({
     />
   );
 
-
   return (
     <section
       className={cn(
@@ -122,9 +121,11 @@ export function ColumnView({
         onDropTask(column.id, index);
       }}
     >
-
       <header
-        className={cn("mb-2 flex items-center gap-2", columnDraggable && "cursor-grab active:cursor-grabbing")}
+        className={cn(
+          "mb-2 flex items-center gap-2",
+          columnDraggable && "cursor-grab active:cursor-grabbing",
+        )}
         draggable={columnDraggable}
         onDragStart={(e) => {
           if (!columnDraggable) return;
@@ -159,7 +160,12 @@ export function ColumnView({
             >
               <Check className="size-4" />
             </Button>
-            <Button size="icon" variant="ghost" className="size-8" onClick={() => setRenaming(false)}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-8"
+              onClick={() => setRenaming(false)}
+            >
               <X className="size-4" />
             </Button>
           </div>
@@ -182,7 +188,12 @@ export function ColumnView({
             {canEdit && !done && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="ghost" className="size-7" aria-label="Column options">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-7"
+                    aria-label="Column options"
+                  >
                     <MoreHorizontal className="size-4" />
                   </Button>
                 </DropdownMenuTrigger>
