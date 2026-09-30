@@ -119,7 +119,6 @@ async function request<T>(
   let res: Response;
   try {
     res = await fetch(`${BASE_URL}${path}`, init);
-
   } catch {
     throw new ApiError("Can't reach the server. Is the backend running?", 0);
   }
@@ -313,11 +312,9 @@ export async function updateMemberRole(
   userId: string,
   role: ShareRole,
 ): Promise<BoardMemberDetail[]> {
-  return request<BoardMemberDetail[]>(
-    "PATCH",
-    `/boards/${enc(boardId)}/members/${enc(userId)}`,
-    { role },
-  );
+  return request<BoardMemberDetail[]>("PATCH", `/boards/${enc(boardId)}/members/${enc(userId)}`, {
+    role,
+  });
 }
 
 export async function removeMember(boardId: string, userId: string): Promise<BoardMemberDetail[]> {

@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { toast } from "sonner";
 import { getCurrentUser, type User } from "@/api/mockClient";
 
@@ -28,7 +36,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return <Ctx.Provider value={{ user, rev, refresh }}>{children}</Ctx.Provider>;
 }
-
 
 export const useApp = () => useContext(Ctx);
 

@@ -55,7 +55,6 @@ function ArchivePage() {
         owner can delete a card forever, and that can't be undone.
       </p>
 
-
       {loading && <p className="mt-6 text-sm text-muted-foreground">Loading…</p>}
       {tasks?.length === 0 && (
         <p className="mt-10 rounded-2xl border border-dashed p-10 text-center text-sm text-muted-foreground">
@@ -101,7 +100,6 @@ function ArchivePage() {
             )}
 
             {canDelete && (
-
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button

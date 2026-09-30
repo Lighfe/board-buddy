@@ -4,7 +4,6 @@ import { getBoard } from "@/api/mockClient";
 import { useApi } from "@/lib/app-state";
 import { colorValue, useBoardColorId } from "@/lib/board-color";
 
-
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +18,6 @@ function BoardLayout() {
   const { boardId } = Route.useParams();
   const { data, error, loading } = useApi(() => getBoard(boardId), [boardId]);
   const background = colorValue(useBoardColorId(boardId));
-
 
   if (loading && !data) {
     return <p className="p-8 text-sm text-muted-foreground">Loading board…</p>;
@@ -38,12 +36,8 @@ function BoardLayout() {
   }
 
   return (
-    <div
-      className="flex min-h-screen flex-col"
-      style={background ? { background } : undefined}
-    >
+    <div className="flex min-h-screen flex-col" style={background ? { background } : undefined}>
       <header className="border-b bg-card/70 backdrop-blur">
-
         <div className="mx-auto flex w-full max-w-[110rem] flex-wrap items-center gap-3 px-4 py-3">
           <Link
             to="/boards"
@@ -87,7 +81,6 @@ function BoardLayout() {
           </nav>
         </div>
       </header>
-
 
       <Outlet />
     </div>

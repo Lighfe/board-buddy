@@ -36,7 +36,10 @@ function RedeemPage() {
             : `You already had ${res.role} access to “${res.boardName}”, so nothing changed.`,
         );
         refresh();
-        setTimeout(() => void navigate({ to: "/boards/$boardId", params: { boardId: res.boardId } }), 1200);
+        setTimeout(
+          () => void navigate({ to: "/boards/$boardId", params: { boardId: res.boardId } }),
+          1200,
+        );
       })
       .catch((e: unknown) => {
         setStatus("error");
@@ -51,7 +54,9 @@ function RedeemPage() {
           <TriangleAlert className="mx-auto size-8 text-destructive" />
         ) : (
           <CheckCircle2
-            className={status === "ok" ? "mx-auto size-8 text-done" : "mx-auto size-8 text-muted-foreground"}
+            className={
+              status === "ok" ? "mx-auto size-8 text-done" : "mx-auto size-8 text-muted-foreground"
+            }
           />
         )}
         <h1 className="mt-4 text-xl font-bold">
